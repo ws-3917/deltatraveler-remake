@@ -1,11 +1,15 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include <SDL3_image/SDL_image.h>
+#include <SDL3_mixer/SDL_mixer.h>
+#include <SDL3_net/SDL_net.h>
+#include <SDL3_ttf/SDL_ttf.h>
 #include <vector>
 
 int main(int argc, char *argv[])
 {
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *window = SDL_CreateWindow("Moving Triangle", 1280, 960, SDL_WINDOW_RESIZABLE);
+    SDL_Window *window = SDL_CreateWindow("Deltatest", 1280, 960, SDL_WINDOW_RESIZABLE);
     SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, "vulkan");
 
