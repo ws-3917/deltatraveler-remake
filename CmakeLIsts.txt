@@ -36,8 +36,8 @@ install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION .)
 # 下面这些主要用于mingw构建的游戏运行
 set(MINGW_DLL_PATH "C:/Program Files/mingw64/bin")
 
-file(GLOB MINGW_DLLS "${MINGW_DLL_PATH}/*.dll")
 install(FILES
-    ${MINGW_DLLS}
+    "${MINGW_DLL_PATH}/libgcc_s_seh-1.dll"
+    "${MINGW_DLL_PATH}/libstdc++-6.dll"
     DESTINATION build
 )
