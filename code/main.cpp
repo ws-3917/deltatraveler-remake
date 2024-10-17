@@ -119,7 +119,6 @@ int main(int argc, char *argv[])
     SDL_Window *window = SDL_CreateWindow("RestTrolley", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
     SDL_Event event{};
-
     bool running = true;
     int t0 = 0, t1 = 0;
     int speed = 4;

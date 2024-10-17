@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 set(GAME_NAME RestTrolley)
 project(${GAME_NAME} VERSION 1.0)
 
+set(CMAKE_CXX_STANDARD 23)
 # 找到所有 SDL3 相关库
 find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3-shared)
 find_package(SDL3_image REQUIRED CONFIG REQUIRED COMPONENTS SDL3_image-shared)
