@@ -10,7 +10,7 @@ find_package(SDL3_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL3_ttf-shared)
 find_package(SDL3_net REQUIRED CONFIG REQUIRED COMPONENTS SDL3_net-shared)
 
 # 添加可执行文件
-add_executable(${GAME_NAME} code/main.cpp) # 增加控制台输出
+add_executable(${GAME_NAME} code/main.cpp apps/icon.rc) # 增加控制台输出
 
 # 统一链接 SDL3 库
 target_link_libraries(${GAME_NAME} PRIVATE SDL3::SDL3 SDL3_image::SDL3_image SDL3_mixer::SDL3_mixer SDL3_ttf::SDL3_ttf SDL3_net::SDL3_net)
@@ -32,9 +32,9 @@ install(FILES
 
 # 安装资源文件夹到根目录
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/assets DESTINATION .)
-install(FILES ${CMAKE_SOURCE_DIR}/${GAME_NAME}.lnk DESTINATION .)
 # 下面这些主要用于mingw构建的游戏运行
-set(MINGW_DLL_PATH "C:/Program Files/msys64/ucrt64/bin")
+set(MINGW_DLL_PATH "C:/Program Files (x86)/msys64/ucrt64/bin")
+
 install(FILES
     "${MINGW_DLL_PATH}/libgcc_s_seh-1.dll"
     "${MINGW_DLL_PATH}/libstdc++-6.dll"
