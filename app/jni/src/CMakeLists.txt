@@ -7,9 +7,18 @@ set(CMAKE_CXX_STANDARD 23)
 if (NOT TARGET SDL3::SDL3)
 find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
 endif()
+
+if (NOT TARGET SDL3_image::SDL3_image)
 find_package(SDL3_image REQUIRED CONFIG REQUIRED COMPONENTS SDL3_image)
+endif()
+
+if (NOT TARGET SDL3_mixer::SDL3_mixer)
 find_package(SDL3_mixer REQUIRED CONFIG REQUIRED COMPONENTS SDL3_mixer)
+endif()
+
+if (NOT TARGET SDL3_ttf::SDL3_ttf)
 find_package(SDL3_ttf REQUIRED CONFIG REQUIRED COMPONENTS SDL3_ttf)
+endif()
 
 # 添加可执行文件
 add_library(main SHARED code/main.cpp)
