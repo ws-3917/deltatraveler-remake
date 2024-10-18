@@ -4,7 +4,6 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
-
 #include "platform.h" // 跨平台处理
 
 #define SCREEN_WIDTH 1280
@@ -24,10 +23,12 @@ namespace RTgameflag
     int counter = 0;
     bool fullscreen = false;
     int keystate[4] = {0}; // up, down, left, right
+    int keyPressed = 0;
 }
 
 using RTgameflag::counter;
 using RTgameflag::fullscreen;
+using RTgameflag::keyPressed;
 using RTgameflag::keystate;
 using std::cerr;
 using std::cout;
@@ -108,7 +109,27 @@ private:
         SDL_RenderPresent(renderer);
     }
 };
-
+void PressKey(const int Direct)
+{
+    if (!keystate[Direct])
+    {
+        keystate[Direct] = keyPressed + 1;
+        keyPressed++;
+    }
+}
+void ReleaseKey(const int Direct)
+{
+    if (keystate[Direct])
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            if (keystate[i] > keystate[Direct])
+                keystate[i]--;
+        }
+        keystate[Direct] = 0;
+        keyPressed--;
+    }
+}
 int calcDelay(int t0, int t1, int f)
 {
     int tick = int((t1 - t0) * f * 1.0 / 1000.0) + 1;
@@ -116,12 +137,12 @@ int calcDelay(int t0, int t1, int f)
 }
 int main(int argc, char *argv[])
 {
-    setWorkDir();
+    SetWorkDir();
     // init
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     IMG_Init(IMG_INIT_PNG);
-    SDL_Window *window = SDL_CreateWindow("RestTrolley", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
+    SDL_Window *window = SDL_CreateWindow("Deltatraveler Remake", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN);
+    SDL_Renderer *renderer = CreateRenderer(window);
     SDL_Event event{};
     bool running = true;
     int t0 = 0, t1 = 0;
@@ -135,7 +156,7 @@ int main(int argc, char *argv[])
         new RTanimation(renderer, "SusieWalk_left.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
         new RTanimation(renderer, "SusieWalk_right.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3)};
 
-    int keyPressed = 0;
+    float touch_x = 0, touch_y = 0;
     // main loop
     while (running)
     {
@@ -156,34 +177,16 @@ int main(int argc, char *argv[])
                     SDL_SetWindowFullscreen(window, fullscreen);
                     break;
                 case SDL_SCANCODE_UP:
-                    if (!keystate[UP])
-                    {
-                        keystate[UP] = keyPressed + 1;
-                        keyPressed++;
-                    }
+                    PressKey(UP);
                     break;
                 case SDL_SCANCODE_DOWN:
-                    if (!keystate[DOWN])
-                    {
-                        keystate[DOWN] = keyPressed + 1;
-                        keyPressed++;
-                    }
+                    PressKey(DOWN);
                     break;
                 case SDL_SCANCODE_LEFT:
-
-                    if (!keystate[LEFT])
-                    {
-                        keystate[LEFT] = keyPressed + 1;
-                        keyPressed++;
-                    }
+                    PressKey(LEFT);
                     break;
                 case SDL_SCANCODE_RIGHT:
-
-                    if (!keystate[RIGHT])
-                    {
-                        keystate[RIGHT] = keyPressed + 1;
-                        keyPressed++;
-                    }
+                    PressKey(RIGHT);
                     break;
                 default:
                     break;
@@ -193,53 +196,16 @@ int main(int argc, char *argv[])
                 switch (event.key.scancode)
                 {
                 case SDL_SCANCODE_UP:
-                    if (keystate[UP])
-                    {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if (keystate[i] > keystate[UP])
-                                keystate[i]--;
-                        }
-                        keystate[UP] = 0;
-                        keyPressed--;
-                    }
+                    ReleaseKey(UP);
                     break;
                 case SDL_SCANCODE_DOWN:
-                    if (keystate[DOWN])
-                    {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if (keystate[i] > keystate[DOWN])
-                                keystate[i]--;
-                        }
-                        keystate[DOWN] = 0;
-                        keyPressed--;
-                    }
-                    keystate[DOWN] = keystate[DOWN] ? 0 : keystate[DOWN];
+                    ReleaseKey(DOWN);
                     break;
                 case SDL_SCANCODE_LEFT:
-                    if (keystate[LEFT])
-                    {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if (keystate[i] > keystate[LEFT])
-                                keystate[i]--;
-                        }
-                        keystate[LEFT] = 0;
-                        keyPressed--;
-                    }
+                    ReleaseKey(LEFT);
                     break;
                 case SDL_SCANCODE_RIGHT:
-                    if (keystate[RIGHT])
-                    {
-                        for (int i = 0; i < 4; i++)
-                        {
-                            if (keystate[i] > keystate[RIGHT])
-                                keystate[i]--;
-                        }
-                        keystate[RIGHT] = 0;
-                        keyPressed--;
-                    }
+                    ReleaseKey(RIGHT);
                     break;
                 default:
                     break;
@@ -248,6 +214,28 @@ int main(int argc, char *argv[])
 
             case SDL_EVENT_QUIT:
                 running = false;
+                break;
+            case SDL_EVENT_FINGER_DOWN:
+                touch_x = event.tfinger.x * SCREEN_WIDTH, touch_y = event.tfinger.y * SCREEN_HEIGHT;
+                if (touch_x < SCREEN_WIDTH / 3.0)
+                    PressKey(LEFT);
+                else if (touch_x > SCREEN_WIDTH * 2.0 / 3.0)
+                    PressKey(RIGHT);
+                else if (touch_y < SCREEN_HEIGHT / 2.0)
+                    PressKey(UP);
+                else
+                    PressKey(DOWN);
+                break;
+            case SDL_EVENT_FINGER_UP:
+                touch_x = event.tfinger.x * SCREEN_WIDTH, touch_y = event.tfinger.y * SCREEN_HEIGHT;
+                if (touch_x < SCREEN_WIDTH / 3.0)
+                    ReleaseKey(LEFT);
+                else if (touch_x > SCREEN_WIDTH * 2.0 / 3.0)
+                    ReleaseKey(RIGHT);
+                else if (touch_y < SCREEN_HEIGHT / 2.0)
+                    ReleaseKey(UP);
+                else
+                    ReleaseKey(DOWN);
                 break;
             default:
                 break;
