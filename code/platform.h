@@ -18,7 +18,6 @@ SDL_Renderer *CreateRenderer(SDL_Window *window)
     const char *renderers[] = {
 #if defined(ANDROID)
         "vulkan",
-        "opengl",
         "opengles",
         "opengles2",
 #elif defined(_WIN32) || defined(_WIN64)
