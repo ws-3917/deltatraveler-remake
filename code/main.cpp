@@ -1,8 +1,11 @@
 #include <iostream>
 #include <vector>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
 #include <SDL3_image/SDL_image.h>
+
+#include "platform.h" // 跨平台处理
 
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 960
@@ -113,8 +116,9 @@ int calcDelay(int t0, int t1, int f)
 }
 int main(int argc, char *argv[])
 {
+    setWorkDir();
     // init
-    SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS);
     IMG_Init(IMG_INIT_PNG);
     SDL_Window *window = SDL_CreateWindow("RestTrolley", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_RESIZABLE);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, NULL);
@@ -126,10 +130,10 @@ int main(int argc, char *argv[])
     position Susieface = DOWN;
     SDL_FPoint SusiePosition = {SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2}; // initial position
     vector<RTanimation *> animation = {
-        new RTanimation(renderer, "../assets/SusieWalk_up.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
-        new RTanimation(renderer, "../assets/SusieWalk_down.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
-        new RTanimation(renderer, "../assets/SusieWalk_left.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
-        new RTanimation(renderer, "../assets/SusieWalk_right.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3)};
+        new RTanimation(renderer, "SusieWalk_up.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
+        new RTanimation(renderer, "SusieWalk_down.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
+        new RTanimation(renderer, "SusieWalk_left.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3),
+        new RTanimation(renderer, "SusieWalk_right.png", 4, 8 * 1000 / GLOBAL_ANIMATION_FPS, 3)};
 
     int keyPressed = 0;
     // main loop
@@ -286,6 +290,7 @@ int main(int argc, char *argv[])
     {
         delete animation[i];
     }
+
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     IMG_Quit();
