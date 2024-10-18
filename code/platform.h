@@ -18,11 +18,12 @@ SDL_Renderer *CreateRenderer(SDL_Window *window)
     const char *renderers[] = {
 #if defined(ANDROID)
         "vulkan",
+        "opengl",
         "opengles",
         "opengles2",
 #elif defined(_WIN32) || defined(_WIN64)
-        "direct3d12",
         "vulkan",
+        "direct3d12",
         "direct3d11",
         "opengl",
 #elif defined(__linux__)
@@ -38,11 +39,7 @@ SDL_Renderer *CreateRenderer(SDL_Window *window)
     {
         testrenderer = SDL_CreateRenderer(window, renderer);
         if (testrenderer)
-        {
-            SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "兼容渲染器", renderer, NULL);
             return testrenderer;
-        }
     }
-    SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "错误", "未找到兼容的渲染器！", NULL);
     return nullptr;
 }

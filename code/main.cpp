@@ -143,6 +143,11 @@ int main(int argc, char *argv[])
     IMG_Init(IMG_INIT_PNG);
     SDL_Window *window = SDL_CreateWindow("Deltatraveler Remake", SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_FULLSCREEN);
     SDL_Renderer *renderer = CreateRenderer(window);
+    if (!renderer)
+    {
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "错误", "未找到兼容的渲染器！\n请咨询开发者或更换设备！", NULL);
+        return 1;
+    }
     SDL_Event event{};
     bool running = true;
     int t0 = 0, t1 = 0;
