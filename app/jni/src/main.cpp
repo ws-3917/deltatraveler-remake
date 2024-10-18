@@ -4,11 +4,15 @@ int main(int argc, char *argv[])
 {
     (void)argc;
     (void)argv;
+
+    SDL_Delay(4000);
     if (!SDL_Init(SDL_INIT_EVENTS | SDL_INIT_VIDEO))
     {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_Init failed (%s)", SDL_GetError());
         return 1;
     }
+
+    SDL_Delay(4000);
 
     if (!SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Hello World",
                                   "!! Your SDL project successfully runs on Android !!", NULL))
@@ -16,7 +20,7 @@ int main(int argc, char *argv[])
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "SDL_ShowSimpleMessageBox failed (%s)", SDL_GetError());
         return 1;
     }
-
+    SDL_Delay(4000);
     SDL_Quit();
     return 0;
 }
