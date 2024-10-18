@@ -1,9 +1,9 @@
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.10)
 
 project(GAME)
 
 # SDL sources are in a subfolder named "SDL"
-# add_subdirectory(SDL)
+add_subdirectory(SDL)
 
 # Compilation of companion libraries
 #add_subdirectory(SDL_image)
