@@ -1,0 +1,11 @@
+font-name,unicode-start,unicode-end,file-type,file-name,ttf-size,png-cellwidth,png-cellheight,binarization-threshold,shift-x,shift-y,spacing
+dtm-mono,,,,,,,,,,,
+dtm-sans,,,,,,,,,,,
+dotumche,,,,,,,,,,,
+sans,,,,,,,,,,,
+papyrus,,,,,,,,,,,
+crypt,,,,,,,,,,,
+mars,,,,,,,,,,,
+apple-kid,,,,,,,,,,,
+saturn,0x20,0x7f,png,chickenwrite.png,,4,10,128,1,0,3
+wingdings,0x20,0x7f,ttf,wingdings.ttf,15,,,128,0,0,2
