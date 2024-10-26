@@ -1,14 +1,17 @@
 #include <filesystem>
+#include <iostream>
 SDL_Renderer *testrenderer = nullptr;
 
 // 设置工作目录的跨平台函数
-void SetWorkDir()
+void SetWorkDir(const char *argv0)
 {
+    std::filesystem::path workDir;
 #if defined(ANDROID)
-    std::filesystem::current_path(".");
+    workDir = ".";
 #elif defined(__linux__) || defined(_WIN32) || defined(_WIN64)
-    std::filesystem::current_path("../assets");
+    workDir = "../assets";
 #endif
+    std::filesystem::current_path(workDir);
 }
 
 // 跨平台的渲染器创建逻辑

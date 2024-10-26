@@ -1,6 +1,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <SDL3_image/SDL_image.h>
+#include <SDL3_mixer/SDL_mixer.h>
+
 #include "platform.h"
 #include <string>
 #include <iostream>
@@ -34,40 +36,74 @@ void binarizeSurface(SDL_Surface *surface, Uint8 threshold)
 // 测试ttf使用
 int main(int argc, char *argv[])
 {
-    SetWorkDir();
+    SetWorkDir(argv[0]);
 
     SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
     TTF_Init();
+    Mix_Init(MIX_INIT_MP3);
 
     SDL_Window *window = SDL_CreateWindow("Deltatraveler Remake", SCREEN_WIDTH, SCREEN_HEIGHT, 0);
     SDL_Renderer *renderer = CreateRenderer(window);
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0xff);
     SDL_RenderClear(renderer);
+    Mix_OpenAudio(0, NULL);
 
-    TTF_Font *font = TTF_OpenFont("lang/zh_CN/font/fzxs12-Pixel.ttf", 12);
+    Mix_Music *music = Mix_LoadMUS("audio/music/arms.mp3");
+    Mix_PlayMusic(music, 0);
+
+    Mix_Chunk *chunk = Mix_LoadWAV("audio/sound/sans.mp3");
+    int fontsize = 120;
+    TTF_Font *font = TTF_OpenFont("lang/zh_CN/font/fzxs12-Pixel.ttf", fontsize);
     if (!font)
         return 1;
-    Uint32 ch = U'测';
     const int scaler = 8;
-    SDL_Surface *surface = TTF_GetGlyphImage(font, ch);
-    binarizeSurface(surface, 0x7f);
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
-    SDL_FRect rect = {0, 0, (float)(texture->w * scaler), (float)(texture->h * scaler)};
-    SDL_RenderTexture(renderer, texture, nullptr, &rect);
-    texture = IMG_LoadTexture(renderer, "image/owCh/susie/normalD.png");
-    rect.h = (float)(texture->h), rect.w = (float)(texture->w);
-    SDL_RenderTexture(renderer, texture, nullptr, &rect);
-    SDL_RenderPresent(renderer);
+    SDL_Texture *textglyph = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB32, SDL_TEXTUREACCESS_TARGET, SCREEN_WIDTH, SCREEN_HEIGHT);
+    SDL_SetTextureScaleMode(textglyph, SDL_SCALEMODE_NEAREST);
+    SDL_SetRenderTarget(renderer, textglyph);
+    int t1 = SDL_GetTicks();
+    SDL_FRect rect;
+    for (Uint32 ch = 0x30; ch <= 0x60; ch++)
+    {
+        SDL_Surface *surface = TTF_RenderGlyph_Solid(font, ch, {0xff, 0xff, 0xff, 0xff});
+        SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
+        SDL_SetTextureScaleMode(texture, SDL_SCALEMODE_NEAREST);
+        rect.x = fontsize * ((ch - 0x30) % (SCREEN_WIDTH / fontsize));
+        rect.y = fontsize * ((ch - 0x30) / (SCREEN_WIDTH / fontsize));
+        rect.w = texture->w * 1.0f;
+        rect.h = texture->h * 1.0f;
+        SDL_RenderTexture(renderer, texture, nullptr, &rect);
+        SDL_DestroySurface(surface);
+        SDL_DestroyTexture(texture);
+    }
 
-    bool running = true;
-    SDL_Delay(2000);
+    SDL_SetRenderTarget(renderer, nullptr);
+    cout << SDL_GetTicks() - t1 << endl;
+    rect.w = 60;
+    rect.h = 60;
+    t1 = SDL_GetTicks();
+    SDL_RenderClear(renderer);
+    for (Uint32 ch = 0x30; ch <= 0x60; ch++)
+    {
+        rect.x = fontsize * ((ch - 0x30) % (SCREEN_WIDTH / fontsize));
+        rect.y = fontsize * ((ch - 0x30) / (SCREEN_WIDTH / fontsize));
+        SDL_RenderTexture(renderer, textglyph, &rect, &rect);
+        SDL_RenderPresent(renderer);
+    }
+    cout << SDL_GetTicks() - t1 << endl;
+    for (int i = 0; i < 5; i++)
+    {
+        Mix_PlayChannel(0, chunk, 0);
+        SDL_Delay(100);
+    }
+    SDL_Delay(1000);
+    Mix_CloseAudio();
     TTF_CloseFont(font);
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+    Mix_Quit();
 
     return 0;
 }
